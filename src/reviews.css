@@ -1,0 +1,18 @@
+/* ===== REVIEWS ===== */
+#reviews{background:linear-gradient(133deg,var(--green-light) -13%,#fff 55%)}
+.reviews-grid{display:flex;gap:32px;flex-wrap:wrap;justify-content:center}
+.review-col{display:flex;flex-direction:column;gap:32px;flex:1;min-width:300px;max-width:440px}
+.review-card{background:radial-gradient(50% 50% at 50% 50%,rgba(255,255,255,0.4) 0%,#fff 100%);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;display:flex;flex-direction:column;gap:20px;position:relative;overflow:hidden;transition:transform 0.3s}
+.review-card:hover{transform:translateY(-3px)}
+.review-x-icon{position:absolute;top:-16px;right:-20px;width:31px;height:31px;opacity:0.12}
+.stars{display:flex;gap:4px}
+.stars svg{width:17px;height:17px;fill:#ffcc00}
+.review-quote{font-style:italic;font-size:15px;line-height:1.8;color:var(--dark)}
+.reviewer{display:flex;align-items:center;gap:14px}
+.reviewer-pic{width:50px;height:50px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);object-fit:cover;background:var(--green-mid)}
+.reviewer-info .name{font-size:16px;font-weight:600;color:#b58e3c}
+.reviewer-info .role{font-size:14px;color:var(--dark);letter-spacing:-0.02em}
+.clients-label{text-align:center;font-size:14px;font-weight:500;color:var(--dark);letter-spacing:-0.01em;margin-bottom:24px}
+.clients-marquee{overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,#000 12.5%,#000 87.5%,transparent 100%);-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 12.5%,#000 87.5%,transparent 100%)}
+.clients-inner{display:flex;gap:80px;animation:marqueeLeft 25s linear infinite;width:max-content;align-items:center}
+.client-logo{height:30px;width:auto;object-fit:contain;filter:invert(1) grayscale(1);opacity:0.6}

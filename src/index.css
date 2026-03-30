@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1d1f13;
+    background: #fff;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .hero-glow-1 {
+    background: radial-gradient(50% 50% at 50% 50%, #eaf0dd 0%, transparent 100%);
+  }
+  .hero-glow-2 {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(244, 255, 235, 0.6) 0%, transparent 100%);
+  }
+  .hero-glow-3 {
+    background: radial-gradient(50% 50% at 50% 50%, #f0ffd1 0%, transparent 100%);
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .shadow-nav {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  /* Reveal animations mapping */
+  .reveal {
+    @apply opacity-0 translate-y-5 transition-all duration-[800ms] ease-out;
+  }
+  .reveal-left {
+    @apply opacity-0 -translate-x-10 transition-all duration-[800ms] ease-out;
+  }
+  .reveal-right {
+    @apply opacity-0 translate-x-10 transition-all duration-[800ms] ease-out;
+  }
+  .reveal.visible, .reveal-left.visible, .reveal-right.visible {
+    @apply opacity-100 translate-y-0 translate-x-0;
+  }
+}
