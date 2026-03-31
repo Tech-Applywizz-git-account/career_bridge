@@ -1,4 +1,38 @@
 import { useRouter } from '../router';
+import { supabase } from '../lib/supabase';
+import { useState, useEffect } from 'react';
+
+/**
+ * Returns true if the booked slot time has already passed.
+ * Handles slot formats like "8:00 PM IST".
+ */
+function isSlotExpired(slotTime, createdAt) {
+  if (!slotTime) return false;
+  const now = new Date();
+  
+  // Parse slotTime (e.g. "8:00 PM IST")
+  const timeMatch = slotTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!timeMatch) return false;
+
+  let hours = parseInt(timeMatch[1], 10);
+  const minutes = parseInt(timeMatch[2], 10);
+  const ampm = timeMatch[3].toUpperCase();
+  
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+
+  // If booking was created on a previous day, it's definitely expired
+  if (createdAt) {
+    const bookingDay = new Date(createdAt).toDateString();
+    if (bookingDay !== now.toDateString()) return true;
+  }
+
+  // If created today, create a Date object for the slot time today
+  const slotDate = new Date();
+  slotDate.setHours(hours, minutes, 0, 0);
+  
+  return now > slotDate;
+}
 
 export default function BookingConfirmed() {
   const { navigate } = useRouter();
@@ -9,6 +43,24 @@ export default function BookingConfirmed() {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
+
+  const [createdAt, setCreatedAt] = useState(null);
+  const userId = sessionStorage.getItem('cb_user_id');
+
+  useEffect(() => {
+    async function fetchBookingDate() {
+      if (!userId) return;
+      const { data } = await supabase
+        .from('bookings')
+        .select('booked_at')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (data) setCreatedAt(data.booked_at);
+    }
+    fetchBookingDate();
+  }, [userId]);
+
+  const hasExpired = isSlotExpired(slot, createdAt);
 
   return (
     <div className="auth-page">
@@ -70,9 +122,38 @@ export default function BookingConfirmed() {
           </ul>
         </div>
 
-        <button id="back-to-home-btn" className="btn-outline auth-submit-btn" onClick={() => navigate('/')}>
-          Back to Home
-        </button>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '12px', flexWrap: 'wrap' }}>
+          <button id="back-to-home-btn" className="btn-outline" onClick={() => navigate('/')} style={{ flex: 1, padding: '12px 20px' }}>
+            Back to Home
+          </button>
+          <button
+            className="btn-primary"
+            onClick={hasExpired ? () => navigate('/book') : undefined}
+            disabled={!hasExpired}
+            title={hasExpired ? "Book another session" : "You can book another slot once your current one has passed"}
+            style={{
+              flex: 1,
+              padding: '12px 20px',
+              border: `1px solid ${hasExpired ? 'var(--green-accent)' : '#ccc'}`,
+              color: '#fff',
+              background: hasExpired ? 'var(--green-accent)' : '#aaa',
+              opacity: hasExpired ? 1 : 0.7,
+              cursor: hasExpired ? 'pointer' : 'not-allowed',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              fontSize: '15px'
+            }}
+          >
+            {!hasExpired && (
+              <svg viewBox="0 0 256 256" width="16" height="16" fill="currentColor">
+                <path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H80v24a8,8,0,0,0,16,0V96h64v24a8,8,0,0,0,16,0V96h32V208Z" />
+              </svg>
+            )}
+            {hasExpired ? 'Book Another Slot →' : 'Book Another Slot (Upcoming)'}
+          </button>
+        </div>
       </div>
     </div>
   );

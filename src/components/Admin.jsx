@@ -35,7 +35,7 @@ export default function Admin() {
   const fetchAdminData = async () => {
     setLoading(true);
     setError('');
-    
+
     try {
       // 1. Fetch all bookings
       const { data: bookingsData, error: bookingsError } = await supabase
@@ -43,26 +43,19 @@ export default function Admin() {
         .select('*');
 
       if (bookingsError) throw bookingsError;
-      
+
       if (!bookingsData || bookingsData.length === 0) {
         setBookings([]);
         setLoading(false);
         return;
       }
 
-      // 2. Extract unique user IDs to fetch profiles locally
-      // This correctly handles relationships without strict foreign key constraints in Supabase
-      const userIds = [...new Set(bookingsData.map(b => b.user_id).filter(id => id))];
-
+      // 2. Fetch all profiles via RPC (bypasses RLS to return all rows)
       let profileMap = {};
-      if (userIds.length > 0) {
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('user_profiles')
-          .select('id, full_name, phone, resume_filename')
-          .in('id', userIds);
+      const { data: profilesData, error: profilesError } = await supabase
+        .rpc('get_all_user_profiles');
 
-        if (profilesError) throw profilesError;
-
+      if (!profilesError && profilesData) {
         profilesData.forEach(p => {
           profileMap[p.id] = p;
         });
@@ -88,7 +81,7 @@ export default function Admin() {
     if (!bookingId) return;
 
     // Optimistic UI update
-    setBookings(prev => prev.map(b => 
+    setBookings(prev => prev.map(b =>
       b.id === bookingId ? { ...b, status: newStatus } : b
     ));
 
@@ -97,7 +90,7 @@ export default function Admin() {
         .from('bookings')
         .update({ status: newStatus })
         .eq('id', bookingId);
-        
+
       if (error) {
         throw error;
       }
@@ -117,7 +110,7 @@ export default function Admin() {
             <svg viewBox="0 0 256 256" width="16" height="16" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z" /></svg>
             Back to home
           </button>
-          
+
           <div className="section-label" style={{ marginTop: '16px', justifyContent: 'center' }}>
             <svg viewBox="0 0 256 256" width="20" height="20"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm40-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h24A8,8,0,0,1,168,128Z" /></svg>
             <span>ADMIN ACCESS</span>
@@ -147,7 +140,7 @@ export default function Admin() {
   return (
     <div className="auth-page" style={{ alignItems: 'flex-start', overflowY: 'auto', padding: '60px 20px', minHeight: '100vh', background: '#f8fdf6' }}>
       <div style={{ maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
-        
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <div>
             <h1 className="auth-heading" style={{ fontSize: '2rem', textAlign: 'left', marginBottom: '8px' }}>Admin Dashboard</h1>
@@ -215,8 +208,8 @@ export default function Admin() {
                       <td style={{ padding: '16px 24px', fontSize: '15px', fontWeight: '500', whiteSpace: 'nowrap' }}>{b.slot_time}</td>
                       <td style={{ padding: '16px 24px', fontSize: '14px', color: '#555' }}>{b.timezone}</td>
                       <td style={{ padding: '16px 24px' }}>
-                        <select 
-                          value={b.status || 'Pending'} 
+                        <select
+                          value={b.status || 'Pending'}
                           onChange={(e) => handleStatusChange(b.id, e.target.value)}
                           style={{
                             padding: '6px 12px',

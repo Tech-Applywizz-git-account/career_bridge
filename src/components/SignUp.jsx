@@ -744,7 +744,7 @@ export default function SignUp() {
             const { data: publicUrlData } = supabase.storage
               .from('resume')
               .getPublicUrl(uploadData.path);
-            
+
             resumePath = publicUrlData.publicUrl;
           }
         }

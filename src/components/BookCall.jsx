@@ -55,13 +55,13 @@ export default function BookCall() {
       
       const { error: bookingError } = await supabase
         .from('bookings')
-        .insert([
+        .upsert([
           {
             user_id: userId,
             slot_time: slotTime,
             timezone: timezone,
           }
-        ]);
+        ], { onConflict: 'user_id' });
 
       if (bookingError) throw bookingError;
 
