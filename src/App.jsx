@@ -1,3 +1,4 @@
+import { RouterProvider, Route } from './router';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import WhyUs from './components/WhyUs';
@@ -12,8 +13,13 @@ import FAQ from './components/FAQ';
 import KeyTakeaways from './components/KeyTakeaways';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
+import SignUp from './components/SignUp';
+import SignIn from './components/SignIn';
+import BookCall from './components/BookCall';
+import BookingConfirmed from './components/BookingConfirmed';
+import Admin from './components/Admin';
 
-export default function App() {
+function HomePage() {
   return (
     <>
       <Navbar />
@@ -33,5 +39,18 @@ export default function App() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <RouterProvider>
+      <Route path="/" component={HomePage} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/signin" component={SignIn} />
+      <Route path="/book" component={BookCall} />
+      <Route path="/booking-confirmed" component={BookingConfirmed} />
+      <Route path="/admin" component={Admin} />
+    </RouterProvider>
   );
 }

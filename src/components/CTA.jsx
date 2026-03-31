@@ -1,6 +1,8 @@
 import useReveal from '../hooks/useReveal';
+import { useRouter } from '../router';
 
 export default function CTA() {
+  const { navigate } = useRouter();
   const reveal1 = useReveal();
   const reveal2 = useReveal();
   const reveal3 = useReveal();
@@ -19,10 +21,10 @@ export default function CTA() {
       <p ref={reveal3} className="cta-sub reveal">Create your free profile in under 3 minutes, explore real success stories, and book your expert 1:1 call. No cost. No commitment. Just results.</p>
       
       <div ref={reveal4} className="hero-ctas reveal" style={{ flexDirection: 'column' }}>
-        <a href="#cta" className="btn-primary">
+        <button id="cta-get-started" onClick={() => navigate('/signup')} className="btn-primary" style={{ cursor: 'pointer' }}>
           <svg className="btn-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></svg>
           Get Started
-        </a>
+        </button>
         <p className="opacity-60 italic text-[14px]">No commitment, book anytime.</p>
       </div>
     </section>

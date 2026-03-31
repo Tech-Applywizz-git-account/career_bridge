@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from '../router';
 
 export default function Navbar() {
+  const { navigate } = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -21,7 +23,7 @@ export default function Navbar() {
         boxShadow: isScrolled ? '0 2px 20px rgba(29,31,19,0.08)' : 'none'
       }}
     >
-      <a href="#" className="flex items-center gap-[8px] no-underline">
+      <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }} className="flex items-center gap-[8px] no-underline">
         <svg width="150" height="30" viewBox="0 0 150 30" fill="none" xmlns="http://www.w3.org/2000/svg">
           <text x="0" y="22" fontFamily="'Plus Jakarta Sans',sans-serif" fontWeight="700" fontSize="20" fill="#1d1f13">CareerBridge</text>
         </svg>
@@ -36,10 +38,11 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-[12px]">
-        <a href="#cta" className="btn-primary flex items-center gap-[6px] px-[20px] py-[10px] border border-dark-5 rounded-sm text-white text-[15px] font-medium transition-all duration-200 hover:opacity-[0.88] max-md:hidden" style={{ background: 'linear-gradient(125deg, #fff -123%, #1d1f13 74%)' }}>
+        <a href="/signin" onClick={(e) => { e.preventDefault(); navigate('/signin'); }} className="text-[14px] font-medium text-dark no-underline transition-opacity duration-200 hover:opacity-[0.6] mr-4">Sign In</a>
+        <button id="nav-get-started" onClick={() => navigate('/signup')} className="btn-primary flex items-center gap-[6px] px-[20px] py-[10px] border border-dark-5 rounded-sm text-white text-[15px] font-medium transition-all duration-200 hover:opacity-[0.88] max-md:hidden" style={{ background: 'linear-gradient(125deg, #fff -123%, #1d1f13 74%)', cursor: 'pointer' }}>
           <svg className="w-[18px] h-[18px] inline-block" viewBox="0 0 256 256" fill="currentColor"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></svg>
           Get Started
-        </a>
+        </button>
         <div className="hamburger hidden max-md:flex flex-col gap-[5px] cursor-pointer p-[8px]" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           <span className="block w-[20px] h-[2px] bg-dark rounded-[2px]"></span>
           <span className="block w-[20px] h-[2px] bg-dark rounded-[2px]"></span>
